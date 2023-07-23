@@ -1,4 +1,4 @@
-const { Fragment } = React;
+const { Fragment, useState } = React;
 
 // Implement a feature to allow item selection with the following requirements:
 // 1. Clicking an item selects/unselects it.
@@ -9,17 +9,42 @@ const { Fragment } = React;
 //
 // Feel free to change the component structure at will.
 
-const List = ({ items }) => (
-  <Fragment>
-    <ul className="List">
-      {items.map((item) => (
-        <li key={item.name} className={`List__item List__item--${item.color}`}>
-          {item.name}
-        </li>
-      ))}
-    </ul>
-  </Fragment>
-);
+const List = ({ items }) => {
+  const [cart, setCart] = useState([]);
+
+  const updateCart = ({ item }) =>
+    cart.includes(item.name)
+      ? setCart([
+          ...cart.filter((selectedItem) => selectedItem !== item.name),
+          (item.isActive = false),
+        ])
+      : setCart([...cart, item.name, (item.isActive = true)]);
+
+  return (
+    <Fragment>
+      <ul className="Selected">
+        {cart.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+      <ul className="List">
+        {items.map((item) => (
+          <li
+            key={item.name}
+            className={`List__item List__item--${item.color}`}
+          >
+            <button
+              className={`list__item__cta ${item.isActive ? "is-active" : ""}`}
+              onClick={() => updateCart({ item })}
+            >
+              {item.name}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </Fragment>
+  );
+};
 
 // ---------------------------------------
 // Do NOT change anything below this line.
